@@ -1,29 +1,4 @@
-% [[e,e,e,a,a,a,e,e,e],[e,e,e,e,a,e,e,e,e],[e,e,e,e,d,e,e,e,e],[a,e,e,e,d,e,e,e,a],[a,a,d,d,k,d,d,a,a],[a,e,e,e,d,e,e,e,a],[e,e,e,e,d,e,e,e,e],[e,e,e,e,a,e,e,e,e],[e,e,e,a,a,a,e,e,e]]
-initial([
-	[e,e,e,a,a,a,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,e,d,e,e,e,e],
-	[a,e,e,e,d,e,e,e,a],
-	[a,a,d,d,k,d,d,a,a],
-	[a,e,e,e,d,e,e,e,a],
-	[e,e,e,e,d,e,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,a,a,a,e,e,e]
-]).
-
-% UTILS
-
-replace([_|T], 0, X, [X|T]) :- !.
-replace([H | T], I, X, [H | R]) :- NewI is I - 1, replace(T, NewI, X, R).
-
-replaceInMatrix(X, Y, Element, M, R) :-
-	nth0(X, M, Row),
-	replace(Row, Y, Element, NewRow),
-	replace(M, X, NewRow, R).
-
-selectFromMatrix(X, Y, M, Element) :-
-	nth0(X, M, Row),
-	nth0(Y, Row, Element).
+:- [utils].
 
 % MOVE
 
@@ -37,12 +12,15 @@ move(X1, Y1, X2, Y2, Board, NewBoard) :-
 	% replace first row with second element
 	replaceInMatrix(X1, Y1, E2, NewBoard1, NewBoard).
 
-canMove(X, Y1, X, Y2, Board) :- 
-	freeTile(X, Y2, Board).
+getAvailableMovesRight(X, Y, Board, Moves) :-
+	getMatrixRow(Board, X, Row),
+	splitList(Row, Y, _, RightList),
+	StartingIndex is Y + 1,
+	findall([X, Y2], nthN(Y2, RightList, e, StartingIndex), Moves).
 
-canMove(X1, Y, X2, Y, Board) :-
-	freeTile(X2, Y, Board).
+%getAvailableMoves(X1, Y1, Board, L) :-
+%	findall([X2, Y2], canMove(X1, Y1, X2, Y2, Board), L).
 
 % BOARD
 
-freeTile(X, Y, Board) :- selectFromMatrix(X, Y, Board, e).
+%freeTile(X, Y, Board) :- selectFromMatrix(X, Y, Board, e).
