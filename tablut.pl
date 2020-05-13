@@ -1,59 +1,69 @@
 :- [utils].
+:- [movement].
 
-% MOVE
+% PIECES BEHAVIOR
 
-move(X1, Y1, X2, Y2, Board, NewBoard) :- 
-	% first element
-	selectFromMatrix(X1, Y1, Board, E1),
-	% second element
-	selectFromMatrix(X2, Y2, Board, E2),
-	% replace second row with first element,
-	replaceInMatrix(X2, Y2, E1, Board, NewBoard1),
-	% replace first row with second element
-	replaceInMatrix(X1, Y1, E2, NewBoard1, NewBoard).
+% capture a piece in position X Y
+capture(X, Y, Board, NewBoard) :- replaceInMatrix(X, Y, e, Board, NewBoard). 
 
-getAvailableMovesRight(X, Y, Board, Moves) :-
-	getMatrixRow(Board, X, Row),
-	splitList(Row, Y, _, RightList),
-	StartingIndex is Y + 1,
-	findall([ X, Y2 ], nthN(Y2, RightList, e, StartingIndex), EmptyCells),
-	getAdjacentCells(X, Y, EmptyCells, Moves).
+% enemy relationships
 
-getAvailableMovesLeft(X, Y, Board, Moves) :-
-	getMatrixRow(Board, X, Row),
-	splitList(Row, Y, LeftList, _),
-	findall([ X, Y2 ], nth0(Y2, LeftList, e), EmptyCells),
-	reverse(EmptyCells, EmptyCellsReversed),
-	getAdjacentCells(X, Y, EmptyCellsReversed, Moves).
-	
-getAvailableMovesDown(X, Y, Board, Moves) :-
-	getMatrixCol(Board, Y, Col),
-	splitList(Col, X, _, RightList),
-	StartingIndex is X + 1,
-	findall([ X2, Y ], nthN(X2, RightList, e, StartingIndex), EmptyCells),
-	getAdjacentCells(X, Y, EmptyCells, Moves).
+enemy(k, a).
+enemy(a, k).
+enemy(d, a).
+enemy(a, d).
 
-getAvailableMovesUp(X, Y, Board, Moves) :-
-	getMatrixCol(Board, Y, Col),
-	splitList(Col, X, LeftList, _),
-	findall([ X2, Y ], nth0(X2, LeftList, e), EmptyCells),
-    reverse(EmptyCells, EmptyCellsReversed),
-    getAdjacentCells(X, Y, EmptyCellsReversed, Moves).
+isCapturedVertically(X, Y, Board) :-
+	selectFromMatrix(X, Y, Board, Piece),
+	UP is X - 1,
+	DOWN is X + 1,
+	selectFromMatrix(UP, Y, Board, UpperNeighbor),
+	enemy(Piece, UpperNeighbor),
+	selectFromMatrix(DOWN, Y, Board, BottomNeighbor),
+	enemy(Piece, BottomNeighbor).
 
-getAdjacentCells(_, _, [], []) :- !.
-getAdjacentCells(X, Y, [[ X1 | Y1 ] | _], []) :-
-	distance(X, Y, X1, Y1, D),
-	D > 1,
+isCapturedHorizontally(X, Y, Board) :-
+    selectFromMatrix(X, Y, Board, Piece),
+    LEFT is Y - 1,
+    RIGHT is Y + 1,
+    selectFromMatrix(X, LEFT, Board, LeftNeighbor),
+    enemy(Piece, LeftNeighbor),
+    selectFromMatrix(X, RIGHT, Board, RightNeighbor),
+    enemy(Piece, RightNeighbor).
+
+isCaptured(X, Y, Board) :- 
+	\+ selectFromMatrix(X, Y, Board, k),
+	isCapturedVertically(X, Y, Board), !.
+isCaptured(X, Y, Board) :- 
+    \+ selectFromMatrix(X, Y, Board, k),
+    isCapturedHorizontally(X, Y, Board), !.
+isCaptured(X, Y, Board) :- 
+    selectFromMatrix(X, Y, Board, k),
+    isCapturedVertically(X, Y, Board),
+	isCapturedHorizontally(X, Y, Board).
+
+% UPDATE BOARD
+
+getPiecesCoordinates(_, [], _, []) :- !.
+getPiecesCoordinates(Piece, [ Row | Remaining ], Counter, Coordinates) :-
+	findall([ Counter, Y ], nth0(Y, Row, Piece), Coords),
+	NextCounter is Counter + 1,
+	getPiecesCoordinates(Piece, Remaining, NextCounter, RemainingCoords),
+	append(Coords, RemainingCoords, Coordinates).
+
+capturePieces([], Board, Board) :- !.
+capturePieces([[ X, Y] | T ], Board, NewBoard) :-
+	\+ isCaptured(X, Y, Board),
+	capturePieces(T, Board, NewBoard),
 	!.
-getAdjacentCells(X, Y, [[ X1 | Y1 ] | T], [[ X1 | Y1 ] | Adj ]) :-
-	distance(X, Y, X1, Y1, 1),
-	getAdjacentCells(X1, Y1, T, Adj).
+capturePieces([[ X, Y] | T ], Board, NewBoard) :-
+    isCaptured(X, Y, Board),
+	capture(X, Y, Board, ModifiedBoard),
+    capturePieces(T, ModifiedBoard, NewBoard).
 
-getAvailableMoves(X, Y, Board, Moves) :- 
-	getAvailableMovesRight(X, Y, Board, R),
-	getAvailableMovesDown(X, Y, Board, D),
-	getAvailableMovesLeft(X, Y, Board, L),
-	getAvailableMovesUp(X, Y, Board, U),
-	append(R, D, RD),
-	append(RD, L, RDL),
-	append(RDL, U, Moves).
+
+updateBoard(a, Board, NewBoard) :-
+	getPiecesCoordinates(d, Board, 0, DefCoords),
+	getPiecesCoordinates(k, Board, 0, KingCoords),
+	append(DefCoords, KingCoords, EnemyCoords),
+	capturePieces(EnemyCoords, Board, NewBoard).
