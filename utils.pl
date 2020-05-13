@@ -67,7 +67,7 @@ selectFromMatrix(X, Y, M, Element) :-
 getMatrixRow(M, I, Row) :- nth0(I, M, Row).
 
 % gets the Ith col of matrix M
-getMatrixColumn(M, I, Col) :-
+getMatrixCol(M, I, Col) :-
     transpose(M, MT),
     getMatrixRow(MT, I, Col).
 
@@ -81,3 +81,7 @@ first_column([], [], []).
 first_column([[]|_], [], []).
 first_column([[I|Is]|Rs], [I|Col], [Is|Rest]) :-
     first_column(Rs, Col, Rest).
+
+
+% function that gets the manhattan distance between two points
+distance(X1, Y1, X2, Y2, D) :- D is abs(X1 - X2) + abs(Y1 - Y2).
