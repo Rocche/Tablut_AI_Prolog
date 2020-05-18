@@ -1,29 +1,5 @@
 % UTILS
 
-initial([
-	[e,e,e,a,a,a,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,e,d,e,e,e,e],
-	[a,e,e,e,d,e,e,e,a],
-	[a,a,d,d,k,d,d,a,a],
-	[a,e,e,e,d,e,e,e,a],
-	[e,e,e,e,d,e,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,a,a,a,e,e,e]
-]).
-
-aCanCapture([
-	[a,d,a,d,a,a,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,e,d,e,e,e,e],
-	[a,e,e,e,d,e,e,e,a],
-	[a,a,d,d,k,d,d,a,a],
-	[a,e,e,e,d,e,e,e,a],
-	[e,e,e,e,d,e,e,e,e],
-	[e,e,e,e,a,e,e,e,e],
-	[e,e,e,a,a,a,e,e,e]
-]).
-
 % util function for nthN
 nth0_det(0, [Elem|_], Elem) :- !.
 nth0_det(1, [_,Elem|_], Elem) :- !.
@@ -98,16 +74,29 @@ first_column([[I|Is]|Rs], [I|Col], [Is|Rest]) :-
 % function that gets the manhattan distance between two points
 distance(X1, Y1, X2, Y2, D) :- D is abs(X1 - X2) + abs(Y1 - Y2).
 
+% function that gets the number of occurrences of a certain element in a list
+occurrencesInList([], _ ,0) :- !.
+occurrencesInList([ X | T ],X,Y):- occurrencesInList(T,X,Z), Y is 1+Z, !.
+occurrencesInList([ X1 | T ],X,Z):- X1 \= X, occurrencesInList(T,X,Z).
 
-% utils functions for updating the board
+% function that gets the number of occurrences of a certain element in a matrix
+occurrencesInMatrix([], _, 0) :- !.
+occurrencesInMatrix([ Row | Remaining ], X, R) :- 
+	occurrencesInList(Row, X, ResultRow),
+	occurrencesInMatrix(Remaining, X, ResultRemaining),
+	R is ResultRow + ResultRemaining .
 
 % get indexes of a certain element in list
-
 getIndexes(E, L, Indexes) :- findall(I, nth0(I, L, E), Indexes).
 
-% requires a X coordinate and a list of Y coordinates. Returns a list of coordinates X,Y
-% ex: X = 2, Y = [0,1,2], R = [[2,0],[2,1],[2,2]]
+% get only the first index of an element in list
+getIndex(E, [ E | _ ], 0) :- !.
+getIndex(E, [ H | T], I) :-
+	E \= H,
+	getIndex(E, T, NewI),
+	I is NewI + 1.
 
-combineCoordinates(_, [], []) :- !.
-combineCoordinates(X, [ Y | T ], [[ X, Y] | T2 ]) :-
-	combineCoordinates(X, T, T2).
+addElementToEachListElement(_, [], []) :-  !.
+addElementToEachListElement(E, [H | T], R) :-
+  addElementToEachListElement(E, T, Remaining),
+  append([[E, H]], Remaining, R).

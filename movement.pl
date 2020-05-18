@@ -1,3 +1,4 @@
+:- [utils].
 % MOVE
 
 % moves a piece from position X1,Y1 to position X2,Y2
@@ -57,4 +58,44 @@ getAvailableMoves(X, Y, Board, Moves) :-
 	getAvailableMovesUp(X, Y, Board, U),
 	append(R, D, RD),
 	append(RD, L, RDL),
-	append(RDL, U, Moves).
+	append(RDL, U, TotalMoves),
+	% remove [3,3]: it is the throne
+	delete(TotalMoves, [3,3], Moves).
+
+oneStepRight(X, Y, Board, [[X, Y1]]) :- Y1 is Y + 1, selectFromMatrix(X, Y1, Board, e), !.
+oneStepRight(X, Y, Board, []) :- Y1 is Y + 1, \+ selectFromMatrix(X, Y1, Board, e).
+oneStepDown(X, Y, Board, [[X1, Y]]) :- X1 is X + 1, selectFromMatrix(X1, Y, Board, e), !.
+oneStepDown(X, Y, Board, []) :- X1 is X + 1, \+ selectFromMatrix(X1, Y, Board, e).
+oneStepLeft(X, Y, Board, [[X, Y1]]) :- Y1 is Y - 1, selectFromMatrix(X, Y1, Board, e), !.
+oneStepLeft(X, Y, Board, []) :- Y1 is Y - 1, \+ selectFromMatrix(X, Y1, Board, e).
+oneStepUp(X, Y, Board, [[X1, Y]]) :- X1 is X - 1, selectFromMatrix(X1, Y, Board, e), !.
+oneStepUp(X, Y, Board, []) :- X1 is X - 1, \+ selectFromMatrix(X1, Y, Board, e).
+
+getAvailableOneStepMoves(X, Y, Board, Moves) :-
+	oneStepRight(X, Y, Board, R),
+	oneStepDown(X, Y, Board, D),
+	oneStepLeft(X, Y, Board, L),
+	oneStepUp(X, Y, Board, U),
+	append(R, D, RD),
+	append(RD, L, RDL),
+	append(RDL, U, TotalMoves),
+	% remove [3,3]: it is the throne
+	delete(TotalMoves, [3,3], Moves).
+
+
+getAllAvailableMoves(_, [], []) :- !.
+getAllAvailableMoves(Board, [[X, Y] | T], Moves) :-
+	getAvailableMoves(X, Y, Board, M),
+	addElementToEachListElement([X, Y], M, M2),
+	getAllAvailableMoves(Board, T, RemainingMoves),
+	append(M2, RemainingMoves, Moves).
+
+getAllPlayerAvailableMoves(a, Board, Moves) :-
+	getPiecesCoordinates(a, Board, Coords),
+	getAllAvailableMoves(Board, Coords, Moves).
+
+getAllPlayerAvailableMoves(d, Board, Moves) :-
+	getPiecesCoordinates(d, Board, DefCoords),
+	getPiecesCoordinates(k, Board, KingCoords),
+	append(DefCoords, KingCoords, Coords),
+	getAllAvailableMoves(Board, Coords, Moves).
