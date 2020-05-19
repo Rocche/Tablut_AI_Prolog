@@ -31,6 +31,9 @@ ENEMY_RELATIONSHIP = {
 	3: [1,2]
 	}
 
+THRONE = [3,3]
+CORNERS = [[0,0],[0,6],[6,6],[6,0]]
+
 #%% UTILS
 def print_board(board):
 	for row in range(BOARD_SIZE):
@@ -89,8 +92,13 @@ def get_available_moves(x, y, board):
 				else:
 					break
 		#now check if castle in the middle is included
-		if [3,3] in available_moves:
-			available_moves.remove([3,3])
+		if THRONE in available_moves:
+			available_moves.remove(THRONE)
+		#if piece to move is different from king, remove corners too
+		if board[x][y] != 1:
+			for corner in CORNERS:
+				if corner in available_moves:
+					available_moves.remove(corner)
 	return available_moves
 
 def move_piece(x1, y1, x2, y2, board):
