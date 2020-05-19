@@ -57,6 +57,11 @@ def highlight_cell(display, x, y):
 	pygame.draw.rect(display, BLACK, (y * CELL_DIMENSION, x * CELL_DIMENSION, CELL_DIMENSION, CELL_DIMENSION),4)
 	draw_circle_in_cell(display, x, y, CELL_DIMENSION // 6, GREY, False)
 
+def show_available_moves(display, x, y, current_board):
+	cells = board.get_available_moves(x, y, current_board)
+	for cell in cells:
+		highlight_cell(display, cell[0], cell[1])
+
 
 _image_library = {}
 def get_image(path):
@@ -80,7 +85,7 @@ while not done:
 			done = True
 	display.fill(LIGHT_GREY)
 	draw_grid(display)
-	highlight_cell(display, 2,1)
+	show_available_moves(display, 3, 0, current_board)
 	draw_board(display, current_board)
 	#display.blit(get_image('img/ball.png'), (20, 20))
 	pygame.display.flip()

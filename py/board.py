@@ -63,33 +63,34 @@ def can_move(player, piece):
 
 def get_available_moves(x, y, board):
 	available_moves = []
-	if y > 0:
-		for l in range(y - 1, -1, -1):
-			if select_piece(x, l, board) == 0:
-				available_moves.append([x, l])
-			else:
-				break
-	if x > 0:
-		for u in range(x - 1, -1, -1):
-			if select_piece(u, y, board) == 0:
-				available_moves.append([u, y])
-			else:
-				break
-	if y < len(board):
-		for r in range(y + 1, len(board)):
-			if select_piece(x, r, board) == 0:
-				available_moves.append([x, r])
-			else:
-				break
-	if x < len(board):
-		for d in range(x + 1, len(board)):
-			if select_piece(d, y, board) == 0:
-				available_moves.append([d, y])
-			else:
-				break
-	#now check if castle in the middle is included
-	if [4,4] in available_moves:
-		available_moves.remove([4,4])
+	if board[x][y] != 0:
+		if y > 0:
+			for l in range(y - 1, -1, -1):
+				if select_piece(x, l, board) == 0:
+					available_moves.append([x, l])
+				else:
+					break
+		if x > 0:
+			for u in range(x - 1, -1, -1):
+				if select_piece(u, y, board) == 0:
+					available_moves.append([u, y])
+				else:
+					break
+		if y < len(board):
+			for r in range(y + 1, len(board)):
+				if select_piece(x, r, board) == 0:
+					available_moves.append([x, r])
+				else:
+					break
+		if x < len(board):
+			for d in range(x + 1, len(board)):
+				if select_piece(d, y, board) == 0:
+					available_moves.append([d, y])
+				else:
+					break
+		#now check if castle in the middle is included
+		if [4,4] in available_moves:
+			available_moves.remove([4,4])
 	return available_moves
 
 def move_piece(x1, y1, x2, y2, board):
