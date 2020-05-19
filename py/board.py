@@ -1,5 +1,5 @@
-PLAYER_1 = 'Attacker'
-PLAYER_2 = 'Defender'
+PLAYER_1 = 3
+PLAYER_2 = 2
 
 ATTACKER = 'attacker'
 DEFENDER = 'defender'

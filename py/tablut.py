@@ -65,6 +65,12 @@ def show_available_moves(display, x, y, current_board):
 def from_mouse_position_to_coordinates(position):
 	return [position[1] // CELL_DIMENSION, position[0] // CELL_DIMENSION]
 
+def change_player(current_player):
+	if current_player == 2:
+		return 3
+	else:
+		return 2
+
 
 _image_library = {}
 def get_image(path):
@@ -84,6 +90,7 @@ clock = pygame.time.Clock()
 
 mouse_position = None
 selected_piece_coords = None
+current_player = 2
 
 while not done:
 	for event in pygame.event.get():
@@ -95,7 +102,10 @@ while not done:
 	draw_grid(display)
 	if mouse_position != None and selected_piece_coords == None:
 		selected_piece_coords = from_mouse_position_to_coordinates(mouse_position)
-		show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
+		if board.can_move(current_player, current_board[selected_piece_coords[0]][selected_piece_coords[1]]):
+			show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
+		else:
+			selected_piece_coords = None
 		mouse_position = None
 	elif mouse_position == None and selected_piece_coords != None:
 		show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
@@ -103,6 +113,7 @@ while not done:
 		movement_coords = from_mouse_position_to_coordinates(mouse_position)
 		if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
 			current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
+			current_player = change_player(current_player)
 		mouse_position = None
 		selected_piece_coords = None
 	draw_board(display, current_board)
