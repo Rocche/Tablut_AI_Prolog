@@ -108,8 +108,6 @@ def change_player(current_player):
 
 #%% COMBAT
 def is_enemy(piece1, piece2):
-	print("First " + str(piece1))
-	print("Second " + str(piece2))
 	if piece2 != 0:
 		if piece2 in ENEMY_RELATIONSHIP[piece1]:
 			return True
@@ -171,6 +169,18 @@ def choose_destination_position(available_moves):
 		return choose_destination_position(available_moves)
 	else:
 		return destination_position
+
+def update_board(x1, y1, x2, y2, board):
+	piece = board[x1][y1]
+	board = move_piece(x1, y1, x2, y2, board)
+	for x in range(len(board)):
+		for y in range(len(board[x])):
+			if ((piece == 2 or piece == 1) and (board[x][y] == 2 or board[x][y] == 1)) or \
+			(piece == 3 and board[x][y] == 3):
+				enemies = check_for_enemies(piece, x, y, board)
+				if len(enemies) > 0:
+					board = fight(piece, x, y, enemies, board)
+	return board
 
 #%% MAIN
 

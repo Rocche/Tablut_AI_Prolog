@@ -112,7 +112,8 @@ while not done:
 	elif mouse_position != None and selected_piece_coords != None:
 		movement_coords = from_mouse_position_to_coordinates(mouse_position)
 		if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
-			current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
+			#current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
+			current_board = board.update_board(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
 			current_player = change_player(current_player)
 		mouse_position = None
 		selected_piece_coords = None
