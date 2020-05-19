@@ -54,6 +54,12 @@ def change_player(current_player):
 	else:
 		return PLAYER_1
 
+def missing_king(board):
+	for x in range(len(board)):
+		for y in range(len(board[x])):
+			if board[x][y] == 1:
+				return False
+	return True
 
 #%% MOVEMENT
 def can_move(player, piece):
@@ -154,11 +160,20 @@ def fight(piece, piece_x, piece_y, enemies, board):
 		enemy_piece = board[enemy_x][enemy_y]
 		delta_x = piece_x - enemy_x
 		delta_y = piece_y - enemy_y
-		if (delta_y == 1 and enemy_y > 0 and (is_ally(piece, board[enemy_x][enemy_y - 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y - 1, board))) or \
-		(delta_y == -1 and enemy_y < BOARD_SIZE -1 and (is_ally(piece, board[enemy_x][enemy_y + 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y + 1, board))) or \
-		(delta_x == 1 and enemy_x > 0 and (is_ally(piece, board[enemy_x - 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x - 1, enemy_y, board))) or \
-		(delta_x == -1 and enemy_x < BOARD_SIZE - 1 and (is_ally(piece, board[enemy_x + 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x + 1, enemy_y, board))):
-			print("\nENEMY KILLED!")
+		#if enemy piece is not the king or, if it is the king, he must be positioned outside the throne
+		if enemy_piece != 1 or (enemy_piece == 1 and (enemy_x != THRONE[0] or enemy_y != THRONE[1])):
+			if (delta_y == 1 and enemy_y > 0 and (is_ally(piece, board[enemy_x][enemy_y - 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y - 1, board))) or \
+			(delta_y == -1 and enemy_y < BOARD_SIZE -1 and (is_ally(piece, board[enemy_x][enemy_y + 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y + 1, board))) or \
+			(delta_x == 1 and enemy_x > 0 and (is_ally(piece, board[enemy_x - 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x - 1, enemy_y, board))) or \
+			(delta_x == -1 and enemy_x < BOARD_SIZE - 1 and (is_ally(piece, board[enemy_x + 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x + 1, enemy_y, board))):
+				print("\nENEMY KILLED!")
+				board[enemy_x][enemy_y] = 0
+		if enemy_piece == 1 and enemy_x == THRONE[0] and enemy_y == THRONE[1] and \
+		board[enemy_x][enemy_y -1] == 3 and \
+		board[enemy_x][enemy_y + 1] == 3 and \
+		board[enemy_x - 1][enemy_y] == 3 and \
+		board[enemy_x + 1][enemy_y] == 3:
+			print("\nKING CAPTURED!")
 			board[enemy_x][enemy_y] = 0
 	return board
 
@@ -195,6 +210,8 @@ def choose_destination_position(available_moves):
 	else:
 		return destination_position
 
+#%% GAME
+
 def update_board(x1, y1, x2, y2, board):
 	piece = board[x1][y1]
 	board = move_piece(x1, y1, x2, y2, board)
@@ -206,6 +223,12 @@ def update_board(x1, y1, x2, y2, board):
 				if len(enemies) > 0:
 					board = fight(piece, x, y, enemies, board)
 	return board
+
+def game_over(player, board):
+	if (player == 2 and ((board[0][0] == 1) or (board[0][6] == 1) or (board[6][6] == 1) or (board[6][0] == 1))) or \
+	(player == 3 and missing_king(board)):
+		return True
+	return False
 
 #%% MAIN
 

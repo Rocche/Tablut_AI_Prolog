@@ -71,6 +71,22 @@ def change_player(current_player):
 	else:
 		return 2
 
+def text_objects(text, font, color):
+    textSurface = font.render(text, True, color)
+    return textSurface, textSurface.get_rect()
+
+def game_over_screen(display, winning_player):
+	if winning_player == 2:
+		text = "Defenders won!"
+		color = BLUE
+	else:
+		text = "Attackers won!"
+		color = BLACK
+	largeText = pygame.font.Font('freesansbold.ttf',80)
+	TextSurf, TextRect = text_objects(text, largeText, color)
+	TextRect.center = ((SCREEN_WIDTH/2),(SCREEN_HEIGHT/2))
+	display.blit(TextSurf, TextRect)
+
 
 _image_library = {}
 def get_image(path):
@@ -86,6 +102,7 @@ pygame.init()
 display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
 current_board = board.STARTING_BOARD
 done = False
+game_over = False
 clock = pygame.time.Clock()
 
 mouse_position = None
@@ -114,9 +131,13 @@ while not done:
 		if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
 			#current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
 			current_board = board.update_board(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
-			current_player = change_player(current_player)
-		mouse_position = None
-		selected_piece_coords = None
+			if board.game_over(current_player, current_board):
+				game_over_screen(display, current_player)
+				done = True
+			else:
+				current_player = change_player(current_player)
+				mouse_position = None
+				selected_piece_coords = None
 	draw_board(display, current_board)
 	#display.blit(get_image('img/ball.png'), (20, 20))
 	pygame.display.flip()
