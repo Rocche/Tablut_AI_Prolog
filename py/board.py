@@ -113,6 +113,12 @@ def is_enemy(piece1, piece2):
 			return True
 	return False
 
+def is_ally(piece1, piece2):
+	if piece2 != 0:
+		if not piece2 in ENEMY_RELATIONSHIP[piece1]:
+			return True
+	return False
+
 def check_for_enemies(piece, x, y, board):
 	enemies = []
 	if y > 0:
@@ -137,15 +143,26 @@ def fight(piece, piece_x, piece_y, enemies, board):
 	for enemy_position in enemies:
 		enemy_x = enemy_position[0]
 		enemy_y = enemy_position[1]
+		enemy_piece = board[enemy_x][enemy_y]
 		delta_x = piece_x - enemy_x
 		delta_y = piece_y - enemy_y
-		if (delta_y == 1 and enemy_y > 0 and board[enemy_x][enemy_y - 1] == piece) or \
-		(delta_y == -1 and enemy_y < BOARD_SIZE -1 and board[enemy_x][enemy_y + 1] == piece) or \
-		(delta_x == 1 and enemy_x > 0 and board[enemy_x - 1][enemy_y] == piece) or \
-		(delta_x == -1 and enemy_x < BOARD_SIZE - 1 and board[enemy_x + 1][enemy_y] == piece):
+		if (delta_y == 1 and enemy_y > 0 and (is_ally(piece, board[enemy_x][enemy_y - 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y - 1, board))) or \
+		(delta_y == -1 and enemy_y < BOARD_SIZE -1 and (is_ally(piece, board[enemy_x][enemy_y + 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y + 1, board))) or \
+		(delta_x == 1 and enemy_x > 0 and (is_ally(piece, board[enemy_x - 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x - 1, enemy_y, board))) or \
+		(delta_x == -1 and enemy_x < BOARD_SIZE - 1 and (is_ally(piece, board[enemy_x + 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x + 1, enemy_y, board))):
 			print("\nENEMY KILLED!")
 			board[enemy_x][enemy_y] = 0
 	return board
+
+def is_hostile_cell_to_piece(piece, cell_x, cell_y, board):
+	if (cell_x == 0 and cell_y == 0) or \
+	(cell_x == 0 and cell_y == 6) or \
+	(cell_x == 6 and cell_y == 6) or \
+	(cell_x == 6 and cell_y == 0) or\
+	((cell_x == 3 and cell_y == 3) and piece == 3) or \
+	((cell_x == 3 and cell_y == 3) and piece == 2 and board[cell_x][cell_y] == 0):
+		return True
+	return False
 
 #%% INPUT MANAGEMENT
 def choose_piece_position():
