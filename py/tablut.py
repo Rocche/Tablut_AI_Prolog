@@ -62,6 +62,9 @@ def show_available_moves(display, x, y, current_board):
 	for cell in cells:
 		highlight_cell(display, cell[0], cell[1])
 
+def from_mouse_position_to_coordinates(position):
+	return [position[1] // CELL_DIMENSION, position[0] // CELL_DIMENSION]
+
 
 _image_library = {}
 def get_image(path):
@@ -78,14 +81,19 @@ display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
 current_board = board.STARTING_BOARD
 done = False
 clock = pygame.time.Clock()
+mouse_position = None
 
 while not done:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			done = True
+		if event.type == pygame.MOUSEBUTTONUP:
+			mouse_position = pygame.mouse.get_pos()
 	display.fill(LIGHT_GREY)
 	draw_grid(display)
-	show_available_moves(display, 3, 0, current_board)
+	if(mouse_position != None):
+		coords = from_mouse_position_to_coordinates(mouse_position)
+		show_available_moves(display, coords[0], coords[1], current_board)
 	draw_board(display, current_board)
 	#display.blit(get_image('img/ball.png'), (20, 20))
 	pygame.display.flip()

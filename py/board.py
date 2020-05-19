@@ -89,8 +89,8 @@ def get_available_moves(x, y, board):
 				else:
 					break
 		#now check if castle in the middle is included
-		if [4,4] in available_moves:
-			available_moves.remove([4,4])
+		if [3,3] in available_moves:
+			available_moves.remove([3,3])
 	return available_moves
 
 def move_piece(x1, y1, x2, y2, board):
