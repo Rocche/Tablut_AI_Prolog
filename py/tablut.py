@@ -88,16 +88,6 @@ def game_over_screen(display, winning_player):
 	display.blit(TextSurf, TextRect)
 
 
-_image_library = {}
-def get_image(path):
-	global _image_library
-	image = _image_library.get(path)
-	if image == None:
-		canonicalized_path = path.replace('/', os.sep).replace('\\', os.sep)
-		image = pygame.image.load(canonicalized_path)
-		_image_library[path] = image
-	return image
-
 pygame.init()
 display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
 current_board = board.STARTING_BOARD
@@ -129,16 +119,14 @@ while not done:
 	elif mouse_position != None and selected_piece_coords != None:
 		movement_coords = from_mouse_position_to_coordinates(mouse_position)
 		if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
-			#current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
 			current_board = board.update_board(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
 			if board.game_over(current_player, current_board):
 				game_over_screen(display, current_player)
 				done = True
 			else:
 				current_player = change_player(current_player)
-				mouse_position = None
-				selected_piece_coords = None
+		mouse_position = None
+		selected_piece_coords = None
 	draw_board(display, current_board)
-	#display.blit(get_image('img/ball.png'), (20, 20))
 	pygame.display.flip()
 	clock.tick(60)
