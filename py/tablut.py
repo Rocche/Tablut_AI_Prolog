@@ -81,7 +81,9 @@ display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
 current_board = board.STARTING_BOARD
 done = False
 clock = pygame.time.Clock()
+
 mouse_position = None
+selected_piece_coords = None
 
 while not done:
 	for event in pygame.event.get():
@@ -91,9 +93,18 @@ while not done:
 			mouse_position = pygame.mouse.get_pos()
 	display.fill(LIGHT_GREY)
 	draw_grid(display)
-	if(mouse_position != None):
-		coords = from_mouse_position_to_coordinates(mouse_position)
-		show_available_moves(display, coords[0], coords[1], current_board)
+	if mouse_position != None and selected_piece_coords == None:
+		selected_piece_coords = from_mouse_position_to_coordinates(mouse_position)
+		show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
+		mouse_position = None
+	elif mouse_position == None and selected_piece_coords != None:
+		show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
+	elif mouse_position != None and selected_piece_coords != None:
+		movement_coords = from_mouse_position_to_coordinates(mouse_position)
+		if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
+			current_board = board.move_piece(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
+		mouse_position = None
+		selected_piece_coords = None
 	draw_board(display, current_board)
 	#display.blit(get_image('img/ball.png'), (20, 20))
 	pygame.display.flip()
