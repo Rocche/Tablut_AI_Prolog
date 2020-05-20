@@ -85,7 +85,7 @@ getAvailableOneStepMoves(X, Y, Board, Moves) :-
 	% remove [3,3]: it is the throne
 	delete(TotalMoves, [3,3], Moves).
 
-
+getAllAvailableMoves([], _, []) :- !.
 getAllAvailableMoves(_, [], []) :- !.
 getAllAvailableMoves(Board, [[X, Y] | T], Moves) :-
 	getAvailableMoves(X, Y, Board, M),

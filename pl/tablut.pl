@@ -5,6 +5,15 @@
 :- [heuristic].
 :- [minimax].
 
+% GAME
+
+defender_wins(B) :-
+	kingWins(B).
+attacker_wins(B) :-
+	occurrencesInMatrix(B, k, 0).
+game_over(Board) :-
+	defender_wins(Board) ; attacker_wins(Board).
+
 % UPDATE BOARD
 
 getPiecesCoordinates(_, [], _, []) :- !.
@@ -25,6 +34,8 @@ capturePieces([[ X, Y] | T ], Board, NewBoard) :-
 	capture(X, Y, Board, ModifiedBoard),
     capturePieces(T, ModifiedBoard, NewBoard).
 
+updateBoard(_, Board, []) :-
+	game_over(Board).
 
 updateBoard(a, Board, NewBoard) :-
 	getPiecesCoordinates(d, Board, DefCoords),

@@ -11,18 +11,18 @@ enemy(d, a).
 enemy(a, d).
 
 
-hostile(a, _, 3, 3) :- !.
+hostile(a, _, 3, 3).
 hostile(d, Board, 3, 3) :- selectFromMatrix(3, 3, Board, e), !.
-hostile(_, _, 0, 0) :- !.
-hostile(_, _, 0, 6) :- !.
-hostile(_, _, 6, 0) :- !.
-hostile(_, _, 6, 6) :- !.
+hostile(_, _, 0, 0).
+hostile(_, _, 0, 6).
+hostile(_, _, 6, 0).
+hostile(_, _, 6, 6).
 
-restricted(_, 0, 0) :- !.
-restricted(_, 0, 6) :- !.
-restricted(_, 6, 0) :- !.
-restricted(_, 6, 6) :- !.
-restricted(_, 3, 3) :- !.
+restricted(P, 0, 0) :- P \= k.
+restricted(P, 0, 6) :- P \= k.
+restricted(P, 6, 0) :- P \= k.
+restricted(P, 6, 6) :- P \= k.
+restricted(_, 3, 3).
 
 isCapturedVertically(X, Y, Board) :-
 	selectFromMatrix(X, Y, Board, Piece),

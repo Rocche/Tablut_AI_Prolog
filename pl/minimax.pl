@@ -33,6 +33,6 @@ cutoff(Player, _, Value, D, Alpha, Beta, Moves, Board, Move1, BestMove) :-
     Value =< Alpha,
     choose_best_move(Player, Moves, Board, D, Alpha, Beta, Move1, BestMove).
 
-choose_best_move(Player, Board, Best) :-
+choose_best_move(Player, Board, Depth, Best) :-
     getAllPlayerAvailableMoves(Player, Board, Moves),
-    choose_best_move(Player, Moves, Board, 3, -1000, 1000, nil, Best).
+    choose_best_move(Player, Moves, Board, Depth, -1000, 1000, nil, Best).
