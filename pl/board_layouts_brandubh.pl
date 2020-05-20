@@ -70,3 +70,23 @@ hsotile_vertical_test([
 	[e,e,e,a,e,e,e],
 	[e,e,e,a,e,e,e]
 ]).
+
+king_throne_test([
+	[e,e,e,a,e,e,e],
+	[d,e,e,a,e,e,a],
+	[a,e,e,a,e,e,d],
+	[a,a,a,k,a,a,a],
+	[e,e,e,a,e,e,e],
+	[e,e,e,a,e,e,e],
+	[e,e,e,a,e,e,e]
+]).
+
+king_outside_test([
+	[e,e,e,a,e,e,e],
+	[d,e,e,k,e,e,a],
+	[a,e,e,a,e,e,d],
+	[a,a,a,e,a,a,a],
+	[e,e,e,a,e,e,e],
+	[e,e,e,a,e,e,e],
+	[e,e,e,a,e,e,e]
+]).

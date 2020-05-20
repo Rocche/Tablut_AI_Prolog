@@ -42,13 +42,14 @@ isCapturedHorizontally(X, Y, Board) :-
     selectFromMatrix(X, RIGHT, Board, RightNeighbor),
     (enemy(Piece, RightNeighbor) ;  hostile(Piece, Board, X, RIGHT)).
 
+
+isCaptured(3, 3, Board) :- 
+    selectFromMatrix(3, 3, Board, k),
+    isCapturedVertically(3, 3, Board),
+	isCapturedHorizontally(3, 3, Board), !.
 isCaptured(X, Y, Board) :- 
-	\+ selectFromMatrix(X, Y, Board, k),
+	%\+ selectFromMatrix(X, Y, Board, k),
 	isCapturedVertically(X, Y, Board), !.
 isCaptured(X, Y, Board) :- 
-    \+ selectFromMatrix(X, Y, Board, k),
-    isCapturedHorizontally(X, Y, Board), !.
-isCaptured(X, Y, Board) :- 
-    selectFromMatrix(X, Y, Board, k),
-    isCapturedVertically(X, Y, Board),
-	isCapturedHorizontally(X, Y, Board).
+    %\+ selectFromMatrix(X, Y, Board, k),
+    isCapturedHorizontally(X, Y, Board).
