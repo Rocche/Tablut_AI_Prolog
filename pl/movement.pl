@@ -59,8 +59,11 @@ getAvailableMoves(X, Y, Board, Moves) :-
 	append(R, D, RD),
 	append(RD, L, RDL),
 	append(RDL, U, TotalMoves),
-	% remove [3,3]: it is the throne
-	delete(TotalMoves, [3,3], Moves).
+	% remove restricted cells
+	selectFromMatrix(X, Y, Board, Piece),
+	findall([X1, Y1], restricted(Piece, X1, Y1), Restricted),
+	ord_subtract_alternative(TotalMoves, Restricted, Moves).
+	
 
 oneStepRight(X, Y, Board, [[X, Y1]]) :- Y1 is Y + 1, selectFromMatrix(X, Y1, Board, e), !.
 oneStepRight(X, Y, Board, []) :- Y1 is Y + 1, \+ selectFromMatrix(X, Y1, Board, e).

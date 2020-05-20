@@ -100,3 +100,10 @@ addElementToEachListElement(_, [], []) :-  !.
 addElementToEachListElement(E, [H | T], R) :-
   addElementToEachListElement(E, T, Remaining),
   append([[E, H]], Remaining, R).
+
+
+ord_subtract_alternative(List, [], List) :- !.
+ord_subtract_alternative(List, [H | T], R) :-
+  delete(List, H, NewList),
+  ord_subtract_alternative(NewList, T, R).
+  

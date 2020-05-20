@@ -60,3 +60,13 @@ tryFindMove([
 	[e,e,e,e,e,e,e],
 	[e,e,e,e,e,e,a]
 ]).
+
+hsotile_vertical_test([
+	[e,e,e,a,e,e,e],
+	[d,e,e,a,e,e,a],
+	[a,e,e,d,e,e,d],
+	[a,a,d,k,d,a,a],
+	[e,e,e,d,e,e,e],
+	[e,e,e,a,e,e,e],
+	[e,e,e,a,e,e,e]
+]).
