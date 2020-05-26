@@ -1,5 +1,6 @@
 from pyswip import Prolog
 import board
+import asyncio
 
 FILE = '../pl/tablut.pl'
 prolog = Prolog()
@@ -25,11 +26,14 @@ def from_board_to_string(board):
     s = s[:-1] + ']'
     return s
 
-def choose_move(board, player):
+
+async def choose_move(board, player):
     if player == 2:
         player_string = 'd'
     else:
         player_string = 'a'
-    query = 'choose_best_move(' + player_string + ',' + from_board_to_string(board) + ',1,M)'
+    #query = 'choose_best_move(' + player_string + ',' + from_board_to_string(board) + ',1,M)'
+    query = 'choose_move(' + player_string + ',' + from_board_to_string(board) + ',3,M)'
     query_result = list(prolog.query(query))
+    print(query_result)
     return query_result[0]['M'][0]

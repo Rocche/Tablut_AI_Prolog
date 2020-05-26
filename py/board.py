@@ -166,14 +166,14 @@ def fight(piece, piece_x, piece_y, enemies, board):
 			(delta_y == -1 and enemy_y < BOARD_SIZE -1 and (is_ally(piece, board[enemy_x][enemy_y + 1]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x, enemy_y + 1, board))) or \
 			(delta_x == 1 and enemy_x > 0 and (is_ally(piece, board[enemy_x - 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x - 1, enemy_y, board))) or \
 			(delta_x == -1 and enemy_x < BOARD_SIZE - 1 and (is_ally(piece, board[enemy_x + 1][enemy_y]) or is_hostile_cell_to_piece(board[enemy_x][enemy_y], enemy_x + 1, enemy_y, board))):
-				print("\nENEMY KILLED!")
+				#print("\nENEMY KILLED!")
 				board[enemy_x][enemy_y] = 0
 		if enemy_piece == 1 and enemy_x == THRONE[0] and enemy_y == THRONE[1] and \
 		board[enemy_x][enemy_y -1] == 3 and \
 		board[enemy_x][enemy_y + 1] == 3 and \
 		board[enemy_x - 1][enemy_y] == 3 and \
 		board[enemy_x + 1][enemy_y] == 3:
-			print("\nKING CAPTURED!")
+			#print("\nKING CAPTURED!")
 			board[enemy_x][enemy_y] = 0
 	return board
 

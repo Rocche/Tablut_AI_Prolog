@@ -3,7 +3,8 @@
 :- [pieces_behavior].
 :- [board_layouts_brandubh].
 :- [heuristic].
-:- [minimax].
+%:- [minimax].
+:- [new_minimax].
 
 % GAME
 

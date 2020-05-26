@@ -98,7 +98,7 @@ getAllPlayerAvailableMoves(a, Board, Moves) :-
 	getAllAvailableMoves(Board, Coords, Moves).
 
 getAllPlayerAvailableMoves(d, Board, Moves) :-
-	getPiecesCoordinates(d, Board, DefCoords),
 	getPiecesCoordinates(k, Board, KingCoords),
-	append(DefCoords, KingCoords, Coords),
+	getPiecesCoordinates(d, Board, DefCoords),
+	append(KingCoords, DefCoords, Coords),
 	getAllAvailableMoves(Board, Coords, Moves).

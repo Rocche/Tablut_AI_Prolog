@@ -2,6 +2,7 @@ import pygame
 import os
 import board
 import ai_handler
+import asyncio
 
 HUMAN_PLAYER = 2
 AI_PLAYER = 3
@@ -91,60 +92,62 @@ def game_over_screen(display, winning_player):
 	TextRect.center = ((SCREEN_WIDTH/2),(SCREEN_HEIGHT/2))
 	display.blit(TextSurf, TextRect)
 
+async def main():
+	pygame.init()
+	display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
+	current_board = board.STARTING_BOARD
+	done = False
+	game_over = False
+	clock = pygame.time.Clock()
 
-pygame.init()
-display = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 50))
-current_board = board.STARTING_BOARD
-done = False
-game_over = False
-clock = pygame.time.Clock()
+	mouse_position = None
+	selected_piece_coords = None
+	current_player = 3
 
-mouse_position = None
-selected_piece_coords = None
-current_player = 3
-
-while not done:
-	if current_player == HUMAN_PLAYER:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				done = True
-			if event.type == pygame.MOUSEBUTTONUP:
-				mouse_position = pygame.mouse.get_pos()
-		display.fill(LIGHT_GREY)
-		draw_grid(display)
-		if mouse_position != None and selected_piece_coords == None:
-			selected_piece_coords = from_mouse_position_to_coordinates(mouse_position)
-			if board.can_move(current_player, current_board[selected_piece_coords[0]][selected_piece_coords[1]]):
-				show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
-			else:
-				selected_piece_coords = None
-			mouse_position = None
-		elif mouse_position == None and selected_piece_coords != None:
-			show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
-		elif mouse_position != None and selected_piece_coords != None:
-			movement_coords = from_mouse_position_to_coordinates(mouse_position)
-			if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
-				current_board = board.update_board(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
-				if board.game_over(current_player, current_board):
-					game_over_screen(display, current_player)
+	while not done:
+		if current_player == HUMAN_PLAYER:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
 					done = True
+				if event.type == pygame.MOUSEBUTTONUP:
+					mouse_position = pygame.mouse.get_pos()
+			display.fill(LIGHT_GREY)
+			draw_grid(display)
+			if mouse_position != None and selected_piece_coords == None:
+				selected_piece_coords = from_mouse_position_to_coordinates(mouse_position)
+				if board.can_move(current_player, current_board[selected_piece_coords[0]][selected_piece_coords[1]]):
+					show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
 				else:
-					current_player = change_player(current_player)
-			mouse_position = None
-			selected_piece_coords = None
-		draw_board(display, current_board)
-		pygame.display.flip()
-		clock.tick(60)
-	else:
-		move = ai_handler.choose_move(current_board, current_player)
-		from_cell = move[0]
-		to_cell = move[1]
-		current_board = board.update_board(from_cell[0], from_cell[1], to_cell[0], to_cell[1], current_board)
-		if board.game_over(current_player, current_board):
-			game_over_screen(display, current_player)
-			done = True
+					selected_piece_coords = None
+				mouse_position = None
+			elif mouse_position == None and selected_piece_coords != None:
+				show_available_moves(display, selected_piece_coords[0], selected_piece_coords[1], current_board)
+			elif mouse_position != None and selected_piece_coords != None:
+				movement_coords = from_mouse_position_to_coordinates(mouse_position)
+				if movement_coords in board.get_available_moves(selected_piece_coords[0], selected_piece_coords[1], current_board):
+					current_board = board.update_board(selected_piece_coords[0], selected_piece_coords[1], movement_coords[0], movement_coords[1], current_board)
+					if board.game_over(current_player, current_board):
+						game_over_screen(display, current_player)
+						done = True
+					else:
+						current_player = change_player(current_player)
+				mouse_position = None
+				selected_piece_coords = None
+			draw_board(display, current_board)
+			pygame.display.flip()
+			clock.tick(60)
 		else:
-			current_player = change_player(current_player)
-		draw_board(display, current_board)
-		pygame.display.flip()
-		clock.tick(60)
+			move = await ai_handler.choose_move(current_board, current_player)
+			from_cell = move[0]
+			to_cell = move[1]
+			current_board = board.update_board(from_cell[0], from_cell[1], to_cell[0], to_cell[1], current_board)
+			if board.game_over(current_player, current_board):
+				game_over_screen(display, current_player)
+				done = True
+			else:
+				current_player = change_player(current_player)
+			draw_board(display, current_board)
+			pygame.display.flip()
+			clock.tick(60)
+
+asyncio.run(main())
