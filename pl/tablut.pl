@@ -35,8 +35,8 @@ capturePieces([[ X, Y] | T ], Board, NewBoard) :-
 	capture(X, Y, Board, ModifiedBoard),
     capturePieces(T, ModifiedBoard, NewBoard).
 
-updateBoard(_, Board, []) :-
-	game_over(Board).
+%updateBoard(_, Board, []) :-
+%	game_over(Board).
 
 updateBoard(a, Board, NewBoard) :-
 	getPiecesCoordinates(d, Board, DefCoords),
