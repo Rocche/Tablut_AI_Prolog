@@ -4,7 +4,8 @@
 :- [board_layouts_brandubh].
 :- [heuristic].
 %:- [minimax].
-:- [new_minimax].
+%:- [new_minimax].
+:- [alphabeta].
 
 % GAME
 

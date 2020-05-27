@@ -33,7 +33,8 @@ async def choose_move(board, player):
     else:
         player_string = 'a'
     #query = 'choose_best_move(' + player_string + ',' + from_board_to_string(board) + ',1,M)'
-    query = 'minimax(' + player_string + ',' + player_string + ',2,' + from_board_to_string(board) + ',M,V)'
+    #query = 'minimax(' + player_string + ',' + player_string + ',2,' + from_board_to_string(board) + ',M,V)'
+    query = 'alphabeta(' + player_string + ',2,' + from_board_to_string(board) + ',M)'
     query_result = list(prolog.query(query))
     print(query_result)
-    return query_result[0]['M']
+    return query_result[0]['M'][0]
